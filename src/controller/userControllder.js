@@ -1,5 +1,6 @@
 import db from "../models/index";
 import {
+  handleInfoExistService,
   userServiceLogIn,
   getAllUsers,
   createNewUserSerVice,
@@ -7,10 +8,39 @@ import {
   deleteUserService,
   getAllCodeService,
   searchAllService,
+  userServiceRegister,
+  userServiceLogout,
 } from "../services/userService";
 import { generalRefreshToken } from "../middlewares/auth";
 import client from "../helper/redis_connection";
 
+//// HANDLE CHECK INFO EXIST
+const handleInfoExist = async (req, res) => {
+  try {
+    const response = await handleInfoExistService(
+      req.query.field,
+      req.query.value
+    );
+    if (response) return res.status(200).json(response);
+  } catch (error) {
+    return res.status(400).json({
+      errCode: -1,
+      message: `Error: ${error}`,
+    });
+  }
+};
+/////////////////// HANDLE REGISTER USER /////////
+const handleRegister = async (req, res) => {
+  try {
+    const response = await userServiceRegister(req.body);
+    if (response) return res.status(200).json(response);
+  } catch (error) {
+    return res.status(400).json({
+      errCode: -1,
+      message: `Error: ${error}`,
+    });
+  }
+};
 //////////////////[POST] HANDLE LOG IN USER////////////
 const handleLogIn = async (req, res) => {
   try {
@@ -33,7 +63,7 @@ const handleLogIn = async (req, res) => {
         res.cookie("refresh_token", refresh_token, {
           httpOnly: "true",
           secure: "false",
-          path: "/",
+          path: "http://localhost:8085",
           sameSite: "Strict",
         }),
       ]);
@@ -41,6 +71,18 @@ const handleLogIn = async (req, res) => {
     return res.status(200).json(response);
   } catch (error) {
     res.json({
+      errCode: -1,
+      message: `Error: ${error}`,
+    });
+  }
+};
+//////////////// HANDLE LOG OUT //////////
+const handleLogout = async (req, res) => {
+  try {
+    const response = await userServiceLogout(req.body.data);
+    if (response) return res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({
       errCode: -1,
       message: `Error: ${error}`,
     });
@@ -80,13 +122,12 @@ const getAllUser = async (req, res) => {
         users: [],
       });
     }
-    const users = await getAllUsers(id);
-    const newAccessToken = req.newAccessToken || " ";
+    const users = await getAllUsers(id, req.roleId);
+
     res.json({
       errCode: 0,
       message: "OK!",
       users: users,
-      newAccessToken: newAccessToken,
     });
   } catch (error) {
     res.json({
@@ -147,7 +188,10 @@ const searchAll = async (req, res) => {
 ////////////////EXPORTS///////////////////
 
 module.exports = {
+  handleInfoExist,
+  handleRegister,
   handleLogIn,
+  handleLogout,
   getAllUser,
   createUser,
   updateUser,

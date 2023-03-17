@@ -8,6 +8,7 @@ import {
   verifyAccessToken,
   validationLogginUser,
   verifyRefreshToken,
+  validatationInfoRegister,
 } from "../middlewares/auth";
 import { refreshTokenService } from "../services/jwtService";
 import { getDataRedis, setDataRedis } from "../controller/redisController";
@@ -25,8 +26,15 @@ router.get("/deleteUser", homeController.deleteUser);
 router.get("/recycle_bin", homeController.restoreUser);
 
 ////// Client API////////
+router.post("/api/auth/check-exist", userControllder.handleInfoExist);
 
+router.post(
+  "/api/register",
+  validatationInfoRegister,
+  userControllder.handleRegister
+);
 router.post("/api/login", validationLogginUser, userControllder.handleLogIn);
+router.post("/api/logout", verifyAccessToken, userControllder.handleLogout);
 router.get("/api/get-all-users", verifyAccessToken, userControllder.getAllUser);
 router.post("/api/create-new-user", userControllder.createUser);
 router.put("/api/update-user", userControllder.updateUser);
@@ -38,7 +46,7 @@ router.post("/api/refresh-token", verifyRefreshToken, refreshTokenService);
 router.get("/api/searchAll", userControllder.searchAll);
 
 /// API DOCTORS ///////
-
+//
 router.get(
   "/api/top-doctor-home",
   getDataRedis,

@@ -9,7 +9,59 @@ import client from "../helper/redis_connection";
 const Op = Sequelize.Op;
 //
 dotenv.config();
-
+// INFOR USER EXISTED
+const handleInfoExistService = (field, value) => {
+  return new Promise(async (res, rej) => {
+    try {
+      if (!field || !value) {
+        res({
+          errCode: 1,
+          message: "Missing Parameters",
+        });
+      }
+      const response = await db.User.findOne({
+        where: {
+          field: value,
+        },
+      });
+      res({
+        errCode: 0,
+        isExist: response ? true : false,
+      });
+    } catch (error) {
+      rej(error);
+    }
+  });
+};
+///////////// USER REGISTERN SERVICE ///
+const userServiceRegister = ({ firstName, lastName, email, password }) => {
+  return new Promise(async (res, rej) => {
+    try {
+      const isExist = await checkUserEmail(email);
+      if (isExist) {
+        res({
+          errCode: 1,
+          message: "Your email already used, try another email!",
+        });
+      } else {
+        const hashPasswordFromBcrypt = await hashUserPassword(password);
+        await db.User.create({
+          firstName,
+          lastName,
+          email,
+          password: hashPasswordFromBcrypt,
+          roleId: "R3",
+        });
+        res({
+          errCode: 0,
+          message: "OK!",
+        });
+      }
+    } catch (error) {
+      rej(error);
+    }
+  });
+};
 ////////////USER SERVICE LOGIN//////////////
 const userServiceLogIn = (email, password) => {
   return new Promise(async (res, rej) => {
@@ -31,14 +83,14 @@ const userServiceLogIn = (email, password) => {
         });
         if (user) {
           const checkPassword = bcrypt.compareSync(password, user.password);
-          if (password === user.password) {
+          if (checkPassword) {
             user.image = user.image
               ? Buffer.from(user.image, "base64").toString("binary")
               : null;
             delete user.password;
             const access_token = await generalAccessToken(
               { id: user.id, email: user.email, roleId: user.roleId },
-              "6h"
+              "10s"
             );
             res({
               errCode: 0,
@@ -71,7 +123,30 @@ const userServiceLogIn = (email, password) => {
     }
   });
 };
-
+////////// USER LOG OUT //////////////////
+const userServiceLogout = ({ email, id }) => {
+  return new Promise(async (res, rej) => {
+    try {
+      if (!email || !id) {
+        res({
+          errCode: 1,
+          message: "Missing Parameters",
+        });
+      } else {
+        const user = await db.User.findOne({
+          where: {
+            email: email,
+            id: id,
+          },
+        });
+        if (user) res({ errCode: 0, message: "Logout" });
+        else res({ errCode: 2, message: "Logout Failed" });
+      }
+    } catch (error) {
+      rej(error);
+    }
+  });
+};
 ///////////////CHECK EMAIL USER//////////////////
 
 const checkUserEmail = (userEmail) => {
@@ -88,10 +163,10 @@ const checkUserEmail = (userEmail) => {
 };
 
 /////////////////GET ALL USER OR SINGLE USER/////////////////
-const getAllUsers = (userId, users) => {
+const getAllUsers = (userId, roleId, users) => {
   return new Promise(async (res, rej) => {
     try {
-      if (userId === "ALL") {
+      if (userId === "ALL" && roleId === "R1") {
         users = await db.User.findAll({
           attributes: {
             exclude: ["password", "deletedAt"],
@@ -380,11 +455,14 @@ const searchAllService = (inputSearch) => {
 };
 //////////////EXPORTS/////////////////
 module.exports = {
+  handleInfoExistService,
   userServiceLogIn,
+  userServiceLogout,
   getAllUsers,
   createNewUserSerVice,
   updateUserService,
   deleteUserService,
   getAllCodeService,
   searchAllService,
+  userServiceRegister,
 };

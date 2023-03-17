@@ -7,7 +7,7 @@ const refreshTokenService = async (req, res) => {
     res.status(200).json({
       errCode: 0,
       message: "OK!",
-      newAccessToken,
+      newAccessToken, 
     });
   } catch (error) {
     res.status(400).json({
