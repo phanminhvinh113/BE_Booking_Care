@@ -2,7 +2,7 @@ import db from '../models';
 import { getMessageService, getAllMessagePatientService } from '../services/messageService';
 const getMessage = async (req, res) => {
    try {
-      const response = await getMessageService(req.query.senderId, req.query.receiverId);
+      const response = await getMessageService(req.query.senderId, req.query.receiverId, req.query.offset, req.query.limit);
       if (response) res.status(200).json(response);
    } catch (error) {
       res.json({

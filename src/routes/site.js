@@ -22,9 +22,10 @@ router.get('/deleteUser', homeController.deleteUser);
 router.get('/recycle_bin', homeController.restoreUser);
 
 ////// Client API////////
-router.post('/api/auth/check-exist', userControllder.handleInfoExist);
+router.get('/api/auth/check-exist', userControllder.handleInfoExist);
 
 router.post('/api/register', validatationInfoRegister, userControllder.handleRegister);
+
 router.post('/api/login', validationLogginUser, userControllder.handleLogIn);
 router.post('/api/logout', verifyAccessToken, userControllder.handleLogout);
 router.get('/api/get-all-users', verifyAccessToken, userControllder.getAllUser);
@@ -36,11 +37,12 @@ router.get('/api/allcode', userControllder.getAllCode);
 
 // Token
 router.post('/api/refresh-token', verifyRefreshToken, refreshTokenService);
+
 /////////////////  SEARCH  ////////
 router.get('/api/searchAll', userControllder.searchAll);
 
 /// API DOCTORS ///////
-//
+
 router.get('/api/top-doctor-home', getDataRedis, doctorController.getTopDoctorHome);
 router.get('/api/get-all-doctor', doctorController.getAllDoctor);
 router.post('/api/save-infor-personal-doctor', doctorController.postInfoDoctor);
@@ -72,8 +74,8 @@ router.get('/api/get-top-clinic-home', getDataRedis, clinicController.getTopClin
 router.get('/api/get-all-clinic', clinicController.getAllClinic);
 
 //////////////// CONVERSATION , MESSAGE API  ///////////////////
-router.get('/api/get_all_message', messageController.getMessage);
-router.get('/api/get_conversation_doctor', messageController.getAllMessagePatient);
+router.get('/api/get_all_message', verifyAccessToken, messageController.getMessage);
+router.get('/api/get_conversation_doctor', verifyAccessToken, messageController.getAllMessagePatient);
 ///
 
 module.exports = router;

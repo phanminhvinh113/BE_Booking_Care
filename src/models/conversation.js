@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       {
          senderId: DataTypes.INTEGER,
          receiverId: DataTypes.INTEGER,
+         messageWait: DataTypes.INTEGER,
          typeSenderId: DataTypes.STRING,
          typeReceiverId: DataTypes.STRING,
       },

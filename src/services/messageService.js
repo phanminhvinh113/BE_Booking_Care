@@ -1,7 +1,7 @@
 import db from '../models';
 import { convertToImageBase64 } from '../helper/convertImage';
 import { Op } from 'sequelize';
-const getMessageService = (senderId, receiverId) => {
+const getMessageService = (senderId, receiverId, offset, limit) => {
    return new Promise(async (res, rej) => {
       try {
          if (!senderId || !receiverId) {
@@ -11,12 +11,17 @@ const getMessageService = (senderId, receiverId) => {
             });
          }
          const message = await db.Message.findAll({
+            offset: offset ? offset : 0,
+            limit: limit ? limit : 20,
             where: {
                [Op.or]: [
                   { senderId, receiverId },
                   { senderId: receiverId, receiverId: senderId },
                ],
             },
+            order: [
+               ['createdAt', 'DESC'], // Sorts by COLUMN_NAME_EXAMPLE in ascending order
+            ],
             attributes: ['senderId', 'text', 'time'],
          });
          if (message)
@@ -41,9 +46,12 @@ const getAllMessagePatientService = (doctorId) =>
          }
 
          const conversation = await db.Conversation.findAll({
+            limit: 10,
+
             where: {
                receiverId: doctorId,
             },
+
             attributes: ['senderId', 'receiverId'],
             include: [
                {
@@ -51,6 +59,7 @@ const getAllMessagePatientService = (doctorId) =>
                   attributes: ['id', 'firstName', 'lastName', 'roleId', 'image'],
                },
             ],
+            order: [['updatedAt', 'DESC']],
             raw: true,
             nest: true,
          });
