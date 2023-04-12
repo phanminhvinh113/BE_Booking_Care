@@ -10,7 +10,6 @@ import {
     getFeedbackDoctorService,
 } from '../services/doctorService';
 import { setDataRedisService } from '../services/redisService';
-import client from '../helper/redis_connection';
 
 const getTopDoctorHome = async (req, res) => {
     try {

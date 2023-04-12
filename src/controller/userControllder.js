@@ -12,7 +12,7 @@ import {
     userServiceLogout,
 } from '../services/userService';
 import { generalRefreshToken } from '../middlewares/auth';
-import client from '../helper/redis_connection';
+
 
 //// HANDLE CHECK INFO EXIST
 const handleInfoExist = async (req, res) => {
@@ -56,7 +56,6 @@ const handleLogIn = async (req, res) => {
             );
             // SAVE
             await Promise.all([
-                client.set('refresh_token', refresh_token, 'EX', 365 * 24 * 60 * 60),
                 res.cookie('refresh_token', refresh_token, {
                     httpOnly: 'true',
                     secure: 'false',

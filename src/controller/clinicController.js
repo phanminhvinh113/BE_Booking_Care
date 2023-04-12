@@ -1,6 +1,5 @@
 import { postInfoClinicService, getTopClinicHomeService, getAllClinicService } from '../services/clinicService';
 import { setDataRedisService } from '../services/redisService';
-import client from '../helper/redis_connection';
 
 const postInfoClinic = async (req, res) => {
     try {

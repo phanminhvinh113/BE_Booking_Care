@@ -1,4 +1,5 @@
 import express from 'express';
+import helmet from 'helmet';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -19,10 +20,12 @@ const app = express();
 
 // cofig cors for call API from FrontEnd
 const corsOptions = {
-   origin: process.env.URL_REACT_CLIENT,
-   credentials: true, //access-control-allow-credentials:true
-   optionSuccessStatus: 200,
+    origin: process.env.URL_REACT_CLIENT,
+    credentials: true, //access-control-allow-credentials:true
+    optionSuccessStatus: 200,
 };
+app.use(helmet());
+//
 app.use(cors(corsOptions));
 //PORT
 const port = process.env.PORT || 8085;
@@ -49,5 +52,5 @@ viewEngine(app);
 initWebRoutes(app);
 
 app.listen(port, () => {
-   console.log(`Server is running http://localhost:${port}`);
+    console.log(`Server is running http://localhost:${port}`);
 });

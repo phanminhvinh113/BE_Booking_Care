@@ -59,6 +59,7 @@ router.post('/api/post-info-booking-medical', patientController.postInfoBookingM
 router.post('/api/post-info-booking-medical', patientController.postInfoBookingMedical);
 router.post('/api/verify-booking-patient', patientController.verifyBookingPatient);
 router.post('/api/evaluate-doctor', patientController.evaluateMedicalDoctor);
+router.post('/api/comment-evalute', patientController.commentEvaluteMical);
 
 ////////////////// API SPECIALTY //////////////////////
 
