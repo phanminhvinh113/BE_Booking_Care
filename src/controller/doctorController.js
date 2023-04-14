@@ -10,7 +10,8 @@ import {
     getFeedbackDoctorService,
 } from '../services/doctorService';
 import { setDataRedisService } from '../services/redisService';
-
+import { incr } from '../middlewares/limitation';
+import client from '../helper/redis_connection';
 const getTopDoctorHome = async (req, res) => {
     try {
         const limit = req.query.limit;
@@ -130,6 +131,7 @@ const completeConfirmMedical = async (req, res) => {
 const getFeedbackDoctor = async (req, res) => {
     try {
         const response = await getFeedbackDoctorService(req.query.doctorId);
+
         return res.status(200).json(response);
     } catch (error) {
         return res.status(400).json({

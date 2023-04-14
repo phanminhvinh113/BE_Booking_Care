@@ -1,7 +1,10 @@
 import mongoose from 'mongoose';
+require('dotenv').config();
+//
+mongoose.set('strictQuery', false);
 const connectMongGo = () => {
     mongoose
-        .connect('mongodb+srv://booking_care:phanminhvinh2003@cluster02.gnptasf.mongodb.net/?retryWrites=true&w=majority', {
+        .connect(process.env.MONGODB_URL_ATLAT, {
             useNewUrlParser: true,
         })
         .then(() => {

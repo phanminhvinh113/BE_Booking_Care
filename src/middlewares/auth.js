@@ -1,10 +1,8 @@
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-
 import { userValidation, userRegisterValidation } from '../helper/validation';
 import { getDataRedisService, setDataRedisService } from '../services/redisService';
-import client from '../helper/redis_connection';
 
 dotenv.config();
 
@@ -85,17 +83,19 @@ const verifyAccessToken = async (req, res, next) => {
             message: 'Invalid Token!',
         });
     }
-    const access_token = req.headers.authorization.split(' ')[1];
+
+    const access_token = req.headers.authorization ? req.headers.authorization?.split(' ')[1] : req.cookies?.access_token;
+
     jwt.verify(access_token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
+        if (err) {
+            return res.status(401).json({
+                errCode: -4,
+                message: err,
+            });
+        }
         if (user && user.roleId) {
             req.roleId = user.roleId;
             next();
-        }
-        if (err) {
-            return res.status(401).json({
-                errCode: 1,
-                message: err,
-            });
         }
     });
 };
@@ -109,7 +109,7 @@ const refreshTokenMiddlwareAdmin = async (req, res, next) => {
             const newAccessToken = await refreshTokenMiddlwareAdmin(userPayload, refresh_token_client, refresh_token_server);
             req.newAccessToken = newAccessToken;
             if (user.roleId === 'R1' && refresh_token_client === refresh_token_server) {
-                const newAccessToken = await generalAccessToken(user, '1d');
+                const newAccessToken = await generalAccessToken(user, '1h');
                 if (newAccessToken) {
                     resolve(newAccessToken);
                 }

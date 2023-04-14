@@ -9,4 +9,5 @@ export const RESPONSE = {
     FAILED: 2,
     MISSING_PARAMETER: 1,
     ERROR: -1,
+    SERVER_BUSY: -4,
 };

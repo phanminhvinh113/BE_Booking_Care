@@ -86,7 +86,7 @@ const userServiceLogIn = (email, password) => {
                     if (checkPassword) {
                         user.image = user.image ? Buffer.from(user.image, 'base64').toString('binary') : null;
                         delete user.password;
-                        const access_token = await generalAccessToken({ id: user.id, email: user.email, roleId: user.roleId }, '6h');
+                        const access_token = await generalAccessToken({ id: user.id, email: user.email, roleId: user.roleId }, '1h');
                         res({
                             errCode: 0,
                             message: 'Success',
@@ -416,7 +416,11 @@ const searchClinicService = (inputSearch) => {
 const searchAllService = (inputSearch) => {
     return new Promise(async (res, rej) => {
         try {
-            const [dataDoctor, dataSpecialty, dataClinic] = await Promise.all([searchDoctorService(inputSearch), searchSpecialtyService(inputSearch), searchClinicService(inputSearch)]);
+            const [dataDoctor, dataSpecialty, dataClinic] = await Promise.all([
+                searchDoctorService(inputSearch),
+                searchSpecialtyService(inputSearch),
+                searchClinicService(inputSearch),
+            ]);
 
             if (dataDoctor || dataClinic || dataSpecialty) {
                 res({

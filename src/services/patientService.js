@@ -167,7 +167,7 @@ const commentEvaluteMicalService = (data, type) => {
                         where: { id: parentId, doctorId },
                     },
                 );
-                res({
+                res({   
                     errCode: RESPONSE.SUCCESS,
                     message: 'OK!',
                 });
