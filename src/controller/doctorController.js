@@ -131,7 +131,6 @@ const completeConfirmMedical = async (req, res) => {
 const getFeedbackDoctor = async (req, res) => {
     try {
         const response = await getFeedbackDoctorService(req.query.doctorId);
-
         return res.status(200).json(response);
     } catch (error) {
         return res.status(400).json({

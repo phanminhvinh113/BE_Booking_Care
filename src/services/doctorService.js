@@ -2,8 +2,7 @@ import db from '../models';
 import _ from 'lodash';
 import { convertToImageBase64 } from '../helper/convertImage';
 import { sendEmailCofirmBill } from './emailService';
-import { incr } from '../middlewares/limitation';
-import client from '../helper/redis_connection';
+
 require('dotenv').config();
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
